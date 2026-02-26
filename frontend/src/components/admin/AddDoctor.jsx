@@ -4,11 +4,7 @@ import { supabase } from '../../supabase';
 
 const AddDoctor = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    specialty: '',
-    password: ''
+    name: '', email: '', phone: '', specialty: '', password: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -36,81 +32,83 @@ const AddDoctor = () => {
 
       if (error) throw error;
 
-      // ✅ SHOW DOCTOR LOGIN CREDENTIALS
       const doctor = data[0];
-      const credentials = `
+      alert(`
 🎉 DOCTOR ADDED SUCCESSFULLY!
-
 📧 Email: ${doctor.email}
 🔑 Password: ${doctor.password}
 👨‍⚕️ Name: ${doctor.name}
 🩺 Specialty: ${doctor.specialty}
-
-💡 Doctor can now login at /login and access dashboard!
-      `;
+💡 Login at /login
+      `);
       
-      alert(credentials);
-      console.log('✅ Doctor added with credentials:', doctor);
-      
-      // Reset form
       setFormData({ name: '', email: '', phone: '', specialty: '', password: '' });
       navigate('/admin');
       
     } catch (error) {
-      console.error('Error:', error);
       setError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100 p-8">
+    <div className="min-h-screen bg-gray-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-12">
-          <button
-            onClick={() => navigate('/admin')}
-            className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-800 font-semibold mb-6"
-          >
-            <span>←</span><span>Back to Dashboard</span>
-          </button>
-          <div className="bg-white p-8 rounded-3xl shadow-2xl">
-            <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-green-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
-              <span className="text-3xl text-white">➕</span>
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Add New Doctor</h1>
-            <p className="text-xl text-gray-600">Save to Supabase + Get Login Credentials</p>
+        {/* Back Button */}
+        <button
+          onClick={() => navigate('/admin')}
+          className="mb-6 text-gray-600 hover:text-black font-semibold flex items-center gap-2"
+        >
+          <span className="text-xl">←</span> Back to Dashboard
+        </button>
+
+        {/* Header */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-6 text-center">
+          <div className="w-20 h-20 bg-black rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <span className="text-3xl text-white">+</span>
           </div>
+          <h1 className="text-3xl font-bold text-gray-900">Add New Doctor</h1>
+          <p className="text-gray-600 mt-2">Save to Supabase + Get Login Credentials</p>
         </div>
 
-        <div className="bg-white p-10 rounded-3xl shadow-2xl border border-gray-100">
+        {/* Form */}
+        <div className="bg-white rounded-2xl shadow-lg p-8">
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-2xl mb-8">
-              ❌ {error}
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6">
+              ⚠️ {error}
             </div>
           )}
           
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3">Full Name *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
                 <input
                   type="text"
                   placeholder="Dr. John Smith"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full p-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 text-lg transition-all disabled:bg-gray-100"
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-200"
                   required
                   disabled={loading}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3">Specialty *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Specialty *</label>
                 <select
                   value={formData.specialty}
                   onChange={(e) => setFormData({ ...formData, specialty: e.target.value })}
-                  className="w-full p-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 text-lg disabled:bg-gray-100"
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-200"
                   required
                   disabled={loading}
                 >
@@ -122,73 +120,56 @@ const AddDoctor = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3">Login Email *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
                 <input
                   type="email"
                   placeholder="john@hospital.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full p-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 text-lg transition-all disabled:bg-gray-100"
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-200"
                   required
                   disabled={loading}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3">Phone</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Phone</label>
                 <input
                   type="tel"
                   placeholder="+91 98765 43210"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full p-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 text-lg disabled:bg-gray-100"
+                  className="w-full p-3 border border-gray-300 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-200"
                   disabled={loading}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-3">Login Password *</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Password *</label>
               <input
                 type="password"
-                placeholder="Secure password (share with doctor)"
+                placeholder="Secure password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full p-5 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-500 text-lg disabled:bg-gray-100"
+                className="w-full p-3 border border-gray-300 rounded-xl focus:border-gray-400 focus:ring-2 focus:ring-gray-200"
                 required
                 disabled={loading}
               />
             </div>
 
-            <div className="bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-200 rounded-3xl p-6">
-              <h3 className="font-bold text-lg text-emerald-800 mb-3">📋 After Submit:</h3>
-              <ul className="text-sm text-emerald-700 space-y-1">
-                <li>✅ Doctor saved to Supabase</li>
-                <li>✅ Login credentials shown in popup</li>
-                <li>✅ Doctor can login: /login → Doctor Dashboard</li>
-                <li>✅ Can set schedule + see patient queue</li>
-              </ul>
-            </div>
-
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-6 px-12 rounded-3xl font-bold text-xl shadow-2xl transition-all ${
-                loading
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 hover:shadow-3xl hover:-translate-y-1'
-              } text-white`}
+              className={`w-full py-4 rounded-xl font-bold text-white transition-all ${
+                loading 
+                  ? 'bg-gray-400 cursor-not-allowed' 
+                  : 'bg-black hover:bg-gray-800 hover:scale-[1.02]'
+              }`}
             >
-              {loading ? (
-                <span className="flex items-center justify-center space-x-3">
-                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Saving Doctor + Generating Credentials...</span>
-                </span>
-              ) : (
-                '🚀 Add Doctor & Get Login Credentials'
-              )}
+              {loading ? 'Adding Doctor...' : 'Add Doctor & Get Login Credentials →'}
             </button>
           </form>
         </div>
